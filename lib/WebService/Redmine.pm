@@ -362,7 +362,8 @@ sub _response
 	}
 
 	if ($self->{expect_single_object} && $self->{no_wrapper_object}) {
-		$content = delete $content->{$self->{expect_single_object}};
+		my @key  = grep { !/^(total_count|offset|limit)$/ } keys %$content;
+		$content = delete $content->{$key[0]} if @key == 1;
 	}
 
 	return $content;
@@ -411,7 +412,9 @@ sub _dispatch_name
 		}
 		$data->{content} = pop @args;
 	}
-
+	
+	delete $self->{expect_single_object};
+	
 	$objects = $self->_normalize_objects($objects);
 	my $i = 0;
 	my @objects;
@@ -453,11 +456,9 @@ sub _dispatch_last_object
 	my $object = shift;
 	my $data   = shift;
 
-	delete $self->{expect_single_object};
-
 	if (length $object) {
 		if ($action eq 'get' || $action eq 'create') {
-			$self->{expect_single_object} = $object;
+			$self->{expect_single_object} = 1;
 		}
 		if ($self->{no_wrapper_object}) {
 			if ($action eq 'create' || $action eq 'update') {
