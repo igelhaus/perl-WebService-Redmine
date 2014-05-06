@@ -5,7 +5,7 @@
 ## Installation from CPAN
 
 ```shell
-$ cpan -i WebService::RedMiner
+$ cpan -i WebService::Redmine
 ```
 ## Documentation
 
